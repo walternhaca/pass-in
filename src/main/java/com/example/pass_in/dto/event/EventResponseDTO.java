@@ -6,6 +6,7 @@ import lombok.Setter;
 
 @Getter
 //Esta classe vai ser a resposta que vamos enviar ao nosso cliente
+//Aqui optamos em classe e nao record pois se fez necessario um construtor diferente
 public class EventResponseDTO {
 
     EventDetailDTO event;

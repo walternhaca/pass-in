@@ -4,10 +4,10 @@ package com.example.pass_in.services;
 
 import com.example.pass_in.domain.attendee.Attendee;
 import com.example.pass_in.domain.event.Event;
+import com.example.pass_in.domain.event.exceptions.EventNotFoundException;
 import com.example.pass_in.dto.event.EventIdDTO;
 import com.example.pass_in.dto.event.EventRequestDTO;
 import com.example.pass_in.dto.event.EventResponseDTO;
-import com.example.pass_in.repositories.AttendeeRepository;
 import com.example.pass_in.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final AttendeeRepository attendeeRepository;
+    private final AttendeeService attendeeService;
 
     //Retorna os dados do evento
     public EventResponseDTO getEventDetail(String eventId){
         Event event = this.eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found with Id: " + eventId)); //Porque o findById retorna um Optional tratamos a possibilidade de nao haver id com a excepcao
-        List<Attendee> attendeeList = this.attendeeRepository.findByEventId(eventId);
+                .orElseThrow(() -> new EventNotFoundException("Event not found with Id: " + eventId)); //Porque o findById retorna um Optional tratamos a possibilidade de nao haver id com a excepcao
+        List<Attendee> attendeeList = this.attendeeService.getAllAttendeesFromEvent(eventId);
         return new EventResponseDTO(event, attendeeList.size());
     }
 
