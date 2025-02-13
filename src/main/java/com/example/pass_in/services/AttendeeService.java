@@ -1,6 +1,7 @@
 package com.example.pass_in.services;
 
 import com.example.pass_in.domain.attendee.Attendee;
+import com.example.pass_in.domain.attendee.exceptions.AttendeeAlreadyExistException;
 import com.example.pass_in.domain.checkin.CheckIn;
 import com.example.pass_in.dto.attendee.AttendeeDetails;
 import com.example.pass_in.dto.attendee.AttendeesListResponseDTO;
@@ -36,6 +37,19 @@ public class AttendeeService {
         }).toList();
 
         return new AttendeesListResponseDTO(attendeeDetailsList);
+    }
+
+    //verfica se o participante ainda nao esta inscrito no evento
+    public void verifyAttendeeSubscription(String email, String eventId){
+        Optional<Attendee> isAttendeeRegistered = this.attendeeRepository.findByEventIdAndEmail(email, eventId);
+        //Se o participante estiver registado o programa vai parar a execucao do metodo e lancar uma excepcao
+        if(isAttendeeRegistered.isPresent()) throw new AttendeeAlreadyExistException("Attendee is already registered");
+    }
+
+    //Regista um Participante no banco de dados
+    public Attendee registerAttendee(Attendee newAttendee){
+        this.attendeeRepository.save(newAttendee);
+        return newAttendee;
     }
 
 }
