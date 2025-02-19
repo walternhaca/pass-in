@@ -31,7 +31,7 @@ public class EventController {
 
         /*A uri no parametro eh injetada pelo spring,eh util pois eh um padrao
         do status created mandar a uri onde o usuario pode resgatar a informacao
-        por esta razao a intrucao abaixo inicializa a uri com dados referentes ao evento criado pelo usuario
+        por esta razao a instrucao abaixo inicializa a uri com dados referentes ao evento criado pelo usuario
         */
 
         var uri = uriComponentsBuilder.path("/events/{id}").buildAndExpand(eventIdDTO.eventId()).toUri();

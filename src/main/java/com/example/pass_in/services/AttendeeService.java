@@ -2,13 +2,17 @@ package com.example.pass_in.services;
 
 import com.example.pass_in.domain.attendee.Attendee;
 import com.example.pass_in.domain.attendee.exceptions.AttendeeAlreadyExistException;
+import com.example.pass_in.domain.attendee.exceptions.AttendeeNotFoundException;
 import com.example.pass_in.domain.checkin.CheckIn;
+import com.example.pass_in.dto.attendee.AttendeeBadgeResponseDTO;
 import com.example.pass_in.dto.attendee.AttendeeDetails;
 import com.example.pass_in.dto.attendee.AttendeesListResponseDTO;
+import com.example.pass_in.dto.attendee.AttendeeBadgeDTO;
 import com.example.pass_in.repositories.AttendeeRepository;
 import com.example.pass_in.repositories.CheckInRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,6 +54,18 @@ public class AttendeeService {
     public Attendee registerAttendee(Attendee newAttendee){
         this.attendeeRepository.save(newAttendee);
         return newAttendee;
+    }
+
+    //Exibi cracha
+    public AttendeeBadgeResponseDTO getAttendeeBadge(String attendeeId, UriComponentsBuilder uriComponentsBuilder ){
+        Attendee attendee = this.attendeeRepository.findById(attendeeId).orElseThrow(
+                () -> new AttendeeNotFoundException("Attendee not found with ID: " + attendeeId) //Lanca a excepcao pois o id passado pode nao existir
+        );
+
+        var uri = uriComponentsBuilder.path("/attendees/{attendeeId}/check-in").buildAndExpand(attendeeId).toUri().toString();
+
+        AttendeeBadgeDTO badge = new AttendeeBadgeDTO(attendee.getId(), attendee.getEmail(), uri, attendee.getEvent().getId());
+        return new AttendeeBadgeResponseDTO(badge);
     }
 
 }
